@@ -121,6 +121,7 @@ basic rules:
   value could be returned (e.g. \code{NA}, \code{NULL}, etc.)
   }
 }
+
 \seealso{
 Other AnswerTests: \code{\link{any_of_exprs}},
   \code{\link{calculates_same_value}},
@@ -132,4 +133,3 @@ Other AnswerTests: \code{\link{any_of_exprs}},
   \code{\link{val_matches}}, \code{\link{var_has_value}},
   \code{\link{var_is_a}}
 }
-
