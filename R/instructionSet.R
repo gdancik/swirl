@@ -153,7 +153,7 @@ waitUser.script <- function(current.row, e){
 
 # Only the question classes enter a testing loop. Testing is the
 # same in both cases. If the response is correct they indicate
-# instruction should progress. If incorrect, they publish a hint
+# i  nstruction should progress. If incorrect, they publish a hint
 # and return to the previous step.
 testResponse <- function(current.row, e)UseMethod("testResponse")
 
@@ -192,13 +192,15 @@ testResponse.default <- function(current.row, e){
     num = as.integer(e$current.row$TimesRepeated)
     num = num + 1
     e$les[e$row,]$TimesRepeated = num
-    # move to next row if we are done
+     #move to next row if we are done
     if (num >= e$current.row$NumTimes) {
        e$row <- 1 + e$row
     }
-    # Reset attempts counter, since correct
+     #Reset attempts counter, since correct
     e$attempts <- 1
-  } else {
+    
+  } 
+  else {
     if(isTRUE(getOption("swirl_logging"))){
       e$log$correct <- c(e$log$correct, FALSE)
     }

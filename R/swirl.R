@@ -44,6 +44,9 @@
 #' swirl()
 #' }
 swirl <- function(resume.class="default", ...){
+
+  cat("=============== We are entering swirl =============== \n")
+  
   # Creates an environment, e, defines a function, cb, and registers
   # cb as a callback with data argument, e. The callback retains a
   # reference to the environment in which it was created, environment(cb),

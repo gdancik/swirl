@@ -35,4 +35,3 @@ Other AnswerTests: \code{\link{AnswerTests}},
   \code{\link{val_matches}}, \code{\link{var_has_value}},
   \code{\link{var_is_a}}
 }
-
