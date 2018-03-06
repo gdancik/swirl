@@ -11,4 +11,3 @@ During a script question, this will move the pointer back to the previous
 row to repeat the previous question (with new values if question templates
 are used.
 }
-
