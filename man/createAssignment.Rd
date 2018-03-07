@@ -4,17 +4,26 @@
 \alias{createAssignment}
 \title{createAssignment}
 \usage{
-createAssignment(yaml_file, R_file, width = 80, show = FALSE)
+createAssignment(yaml.file, directory, name = "assignment", width = 80,
+  show = FALSE)
 }
 \arguments{
-\item{yaml_file}{- lesson file in yaml format}
+\item{yaml.file}{- lesson file in yaml format}
 
-\item{R_file}{- name of assignment file (.R will be added)}
+\item{directory}{- the directory to store the assignment}
+
+\item{name}{- the name of the assignment}
 
 \item{width}{- max number of characters per line in R_file (not including tags)}
 
 \item{show}{- if TRUE, open the assignment (defaults to FALSE)}
 }
+\value{
+None
+}
 \description{
-createAssignment
+creates an auto-gradable assignment by setting up the assignment directory 
+  structure. The directory '/instr/' contains the yaml file and assignment; an empty 
+  '/submission/' directory is also created. Method currently does not work with 
+  template-based problems.
 }

@@ -26,7 +26,8 @@ Imports:
     digest,
     tools,
     utils,
-    methods
+    methods,
+    dplyr
 Suggests:
     stringi
 Encoding: UTF-8

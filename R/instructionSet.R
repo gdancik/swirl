@@ -155,18 +155,20 @@ waitUser.script <- function(current.row, e){
 # same in both cases. If the response is correct they indicate
 # instruction should progress. If incorrect, they publish a hint
 # and return to the previous step.
-testResponse <- function(current.row, e)UseMethod("testResponse")
+testResponse <- function(current.row, e, grading = FALSE)UseMethod("testResponse")
 
-testResponse.default <- function(current.row, e){
+testResponse.default <- function(current.row, e, grading = FALSE){
   if(isTRUE(getOption("swirl_logging"))){
     e$log$question_number <- c(e$log$question_number, e$row)
     e$log$attempt <- c(e$log$attempt, e$attempts)
     e$log$skipped <- c(e$log$skipped, e$skipped)
     e$log$datetime <- c(e$log$datetime, as.numeric(Sys.time()))
   } 
-  
+ 
+  if (!grading) {
   # Increment attempts counter
-  e$attempts <- 1 + e$attempts
+    e$attempts <- 1 + e$attempts
+  }
   # Get answer tests
   tests <- current.row[,"AnswerTests"]
   if(is.na(tests) || tests == ""){
@@ -176,10 +178,13 @@ testResponse.default <- function(current.row, e){
     }
   } else {
     tests <- str_trim(unlist(strsplit(tests,";")))
-    results <- lapply(tests, function(keyphrase){testMe(keyphrase,e)})
+    results <- lapply(tests, function(keyphrase){testMe(keyphrase,e, grading)})
   }
   correct <- !(FALSE %in% unlist(results))
   if(correct){
+    if (grading) {
+        return (TRUE)
+    }
     if(isTRUE(getOption("swirl_logging"))){
       e$log$correct <- c(e$log$correct, TRUE)
     }  
@@ -199,6 +204,9 @@ testResponse.default <- function(current.row, e){
     # Reset attempts counter, since correct
     e$attempts <- 1
   } else {
+    if (grading) {
+        return(FALSE)
+    }
     if(isTRUE(getOption("swirl_logging"))){
       e$log$correct <- c(e$log$correct, FALSE)
     }
@@ -231,12 +239,16 @@ testResponse.default <- function(current.row, e){
   e$skipped <- FALSE
 }
 
-testMe <- function(keyphrase, e){
+# Note: new test syntax required for grading = TRUE
+testMe <- function(keyphrase, e, grading = FALSE){
   # patch to accommodate old-style tests
-  oldcourse <- attr(e$les, "course_name") %in%
+
+  oldcourse <- FALSE
+  if (!grading) {
+    oldcourse <- attr(e$les, "course_name") %in%
     c("Data Analysis", "Mathematical Biostatistics Boot Camp",
       "Open Intro")
-
+  }
   if(oldcourse){
     # Use old test syntax
     # Add a new class attribute to the keyphrase using
@@ -245,6 +257,10 @@ testMe <- function(keyphrase, e){
                                   strsplit(keyphrase, "=")[[1]][1])
     return(runTest(keyphrase, e))
   } else {
+    cat("keyphrase = ", keyphrase, "\n")
+    cat("ls = ")
+    print(ls())
+    print(ls(envir=e))
     # Use new test syntax
     return(eval(parse(text=keyphrase)))
   }
