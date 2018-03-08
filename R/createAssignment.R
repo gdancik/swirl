@@ -22,7 +22,6 @@ createAssignment <- function(yaml.file, directory, name = "assignment", width = 
     return (invisible(NULL))
   }
     
-  # TO DO: modify so this works with template-based problems and repeated questions
   myYaml <- formatYamlForAssignment(yaml.file)
   if (is.null(myYaml)) {
     return(invisible(NULL))
@@ -50,7 +49,6 @@ createAssignment <- function(yaml.file, directory, name = "assignment", width = 
   
 }
 
-
 #' formats Yaml file for use in assignment
 #' createYamlForAssignment 
 #' @param yaml - the lesson file in yaml format
@@ -60,6 +58,13 @@ formatYamlForAssignment <- function(yaml) {
   
   # read in yaml file
   myYaml = parse_content(yaml,NULL)
+  
+  token.list <- NULL
+  for (i in 1:nrow(myYaml)) {
+    tt = token.generate(myYaml[i,], token.list)
+    token.list <- tt$token.list
+    myYaml[i,] <- tt$row
+  }
   
   #Warning set up for questions that have no way to be graded
   tests <- myYaml$AnswerTests
