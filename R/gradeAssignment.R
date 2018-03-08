@@ -1,5 +1,5 @@
 #' gradeAssignment
-#' @param directory - directory of yaml
+#' @param directory - assignment directory containing /instr/, /submission/ and /feedback/
 #' @importFrom dplyr filter mutate
 #' @importFrom stringr str_split
 #' @export
@@ -20,7 +20,7 @@ gradeAssignment <- function(directory) {
   myYaml <- dplyr::filter(myYaml, Class!="text")
   myYaml$AnswerTests <- as.character(myYaml$AnswerTests)
   
-  submission.file <- Sys.glob(paste0(directory,"/submissions/*"))
+  submission.file <- Sys.glob(paste0(directory,"/submissions/*.R"))
   if (length(submission.file) >1) {
     cat("ERROR: grading of multiple submission files not yet implemented\n")
     invisible(NULL)
@@ -28,7 +28,14 @@ gradeAssignment <- function(directory) {
     cat("ERROR: submission file not found in", directory,"/submissions/\n")
     invisible(NULL)
   }
-  
+
+  cat("Checking format of submitted file: ")
+  valid <- checkAssignmentFormat(submission.file, nrow(myYaml))
+  if (!valid) {
+    cat("format is not valid\n")
+    return(NA)
+  }
+    
   cat("Grading the following submission:\n", submission.file, "\n")
   
   answers <- readLines(submission.file)
@@ -46,7 +53,6 @@ gradeAssignment <- function(directory) {
   # add submitted answers to table
   answers <- sapply(answers, rm.comments)
   myYaml <- mutate(myYaml, SubmittedAnswer = answers)
-  
   
   # save and clear global environment so it does not interfere with
   # users answers
@@ -83,15 +89,17 @@ gradeAssignment <- function(directory) {
     cat("AnswerTests: ", current.row$AnswerTests, "\n")
     cat("Submitted: ", current.row$SubmittedAnswer, "\n")
     if (testResponse(current.row, e, TRUE)) {
-      cat("correct!\n")
+      cat("Grade: correct!\n")
       correct[i] <- TRUE
     } else {
-      cat("incorrect\n")
+      cat("Grade: incorrect\n")
       correct[i] <- FALSE
     }
     cat("\n")
   }
 
+  userFeedback(directory, submission.file, correct)
+  
   # clear global environment, since submission may  have changed it
   rm(list = ls(envir = globalenv()), envir = globalenv())
   
@@ -158,3 +166,57 @@ checkAssignmentFormat <- function(submission, numQuestions){
 }
 
 
+#' userFeedback
+#' @param directory - assignment directory containing /instr/, /submission/ and /feedback/
+#' @param submission.file - the complete path of the submission file
+#' @param correct - a logical vector corresponding to whether the answer to a question is
+#'        TRUE or FALSE
+#' @importFrom rmarkdown render
+#' 
+userFeedback <- function(directory, submission.file, correct) {
+  answers <- readLines(submission.file)
+  
+  qs <- paste0("^# <Q", 1:length(correct), ">")
+  
+  for (num in 1:length(qs)) {
+    q <- qs[num]
+    g <- grep(q, answers)
+    if (length(g) != 1) {
+      cat("ERROR: invalid number of questions found\n")
+      return(FALSE)
+    }
+    answers[g] <- paste0(questionHeader(num, correct[num]), answers[g])    
+  }
+  
+  answers[1] <- paste0("```{r error=TRUE}\n",answers[1])
+  n <- nrow(answers)
+  answers[n] <- paste0(answers[g], "\n```\n")
+  
+  
+  rmd.file <- gsub(".*/", "", submission.file)
+  
+  answers[1] <- paste0("## Grade Report for ", rmd.file, "\n", 
+                       "### Number correct = ", sum(correct), "/",
+                       length(correct), "\n\n", answers[1])
+  
+  rmd.file <- gsub(".R$", ".Rmd", rmd.file)
+  
+  rmd.file <- paste0(directory,"/feedback/", rmd.file)
+  write(answers, rmd.file)
+  rmarkdown::render(rmd.file, "html_document")
+  file.remove(rmd.file)
+}
+
+# adds question header including question number and whether or not it is correct
+questionHeader <- function(num, correct) {
+  res <- ""
+  #if (num != 1) {
+      res <- "```\n"
+  #}
+  if (correct) {
+    res <- paste0(res,"### Question ", num, ": <span style = 'color:green'>&#x2713;\n\n```{r error = TRUE}\n")
+  } else {
+    res <- paste0(res,"### Question ", num, ": <span style = 'color:red'>&#x2718;</span>\n\n```{r error = TRUE}\n")
+  }
+  res
+}

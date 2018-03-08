@@ -257,10 +257,6 @@ testMe <- function(keyphrase, e, grading = FALSE){
                                   strsplit(keyphrase, "=")[[1]][1])
     return(runTest(keyphrase, e))
   } else {
-    cat("keyphrase = ", keyphrase, "\n")
-    cat("ls = ")
-    print(ls())
-    print(ls(envir=e))
     # Use new test syntax
     return(eval(parse(text=keyphrase)))
   }

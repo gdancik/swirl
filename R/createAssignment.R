@@ -8,9 +8,9 @@
 #' @return None
 #' 
 #' @description creates an auto-gradable assignment by setting up the assignment directory 
-#'   structure. The directory '/instr/' contains the yaml file and assignment; an empty 
-#'   '/submission/' directory is also created. Method currently does not work with 
-#'   template-based problems.
+#'   structure. The directory '/instr/' contains the converted yaml file and 
+#'   the assignment as an R script; an empty '/submission/' and '/feedback/' directory are 
+#'   also created. Method currently does not work with template-based problems.
 #' 
 #'   
 #' @export
@@ -33,6 +33,7 @@ createAssignment <- function(yaml.file, directory, name = "assignment", width = 
   dir.create(directory)
   dir.create(paste0(directory,"/instr/"))
   dir.create(paste0(directory,"/submissions/"))
+  dir.create(paste0(directory,"/feedback/"))
   
   # save the yaml file
   write.table(myYaml, file = paste0(directory,"/instr/",name,"_yaml.csv"), row.names = FALSE, sep =",")
@@ -48,7 +49,6 @@ createAssignment <- function(yaml.file, directory, name = "assignment", width = 
   }
   
 }
-
 
 
 #' formats Yaml file for use in assignment

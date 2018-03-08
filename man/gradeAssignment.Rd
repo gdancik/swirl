@@ -7,7 +7,7 @@
 gradeAssignment(directory)
 }
 \arguments{
-\item{directory}{- directory of yaml}
+\item{directory}{- assignment directory containing /instr/, /submission/ and /feedback/}
 }
 \description{
 gradeAssignment

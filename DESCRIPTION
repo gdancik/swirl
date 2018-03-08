@@ -27,7 +27,8 @@ Imports:
     tools,
     utils,
     methods,
-    dplyr
+    dplyr,
+    rmarkdown
 Suggests:
     stringi
 Encoding: UTF-8
