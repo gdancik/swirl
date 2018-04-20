@@ -25,5 +25,5 @@ None
 creates an auto-gradable assignment by setting up the assignment directory 
   structure. The directory '/instr/' contains the converted yaml file and 
   the assignment as an R script; an empty '/submission/' and '/feedback/' directory are 
-  also created. Method currently does not work with template-based problems.
+  also created.
 }
