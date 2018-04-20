@@ -1,7 +1,11 @@
-# swirl
+# swirl and swirl-tbp
 
 [![Build Status](https://travis-ci.org/swirldev/swirl.png?branch=master)](https://travis-ci.org/swirldev/swirl)
 [![Downloads](http://cranlogs.r-pkg.org/badges/swirl?color=3399ff)](http://cran-logs.rstudio.com/)
+
+Note: Swirl-tbp is a modified version of swirl incorporating template-based problems and autogradable assignments. For more information, see [https://gdancik.github.io/bioinformatics/swirl-tbp/](https://gdancik.github.io/bioinformatics/swirl-tbp/). The original swirl description is below.
+
+<hr> 
 
 ### [http://swirlstats.com](http://swirlstats.com)
 
